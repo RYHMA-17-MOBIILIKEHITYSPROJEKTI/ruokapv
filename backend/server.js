@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const pool = require('./database'); // Tuo PostgreSQL-yhteys, oletetaan, että pool.js on oikeassa paikassa
+const pool = require('./database'); 
 
 dotenv.config();
 
@@ -24,12 +24,12 @@ app.get('/', (req, res) => {
 // Yhteyden testireitti
 app.get('/test-db', async (req, res) => {
   try {
-    // Tehdään yksinkertainen SELECT-kysely
+
     const result = await pool.query('SELECT NOW()');
-    console.log('Database connected:', result.rows);  // Log the result to console for debugging
+    console.log('Database connected:', result.rows); 
     res.json({
       message: 'Connected to database successfully!',
-      time: result.rows[0] // Tässä `NOW()` palauttaa PostgreSQL:n aikaleiman
+      time: result.rows[0] 
     });
   } catch (err) {
     console.error('Database connection error:', err);
@@ -37,18 +37,8 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-// Esimerkki reitti, joka hakee dataa "meals" taulusta
-app.get('/meals', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM meals'); // Oletetaan, että sinulla on "meals" taulu
-    res.json(result.rows);  // Lähetetään takaisin haettu data
-  } catch (err) {
-    console.error('Database query error:', err);
-    res.status(500).json({ message: 'Failed to fetch meals', error: err.message });
-  }
-});
 
-// Käynnistä palvelin
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
