@@ -43,11 +43,41 @@ const DinnerScreen = () => {
     }
   }, [searchDinner]);
 
-  const saveFoodMeal = (food) => {
-    console.log('Ruoka tallenettu ateriaan:', food)
-    setModalVisible(false)
-  }
-
+  const extractNumericValue = (value) => {
+    // This regex will extract the number from the beginning of the string (e.g., "1 kg" becomes 1)
+    const match = value.match(/^(\d+(\.\d+)?)/);
+    return match ? parseFloat(match[0]) : 0; // Return 0 if no valid number is found
+  };
+  
+  const saveFoodMeal = async (item) => {
+    try {
+      const numericQuantity = extractNumericValue(item.quantity);
+  
+      const response = await fetch('http://localhost:3000/api/add-food', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ruokanimi: item.product_name,
+          maarag: numericQuantity,  // Use the sanitized quantity
+          kalorit: item.nutriments?.['energy-kcal'] || 0,
+        }),
+      });
+  
+      if (response.ok) {
+        console.log('Food saved successfully');
+        setModalVisible(false);
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to save food:', errorData);
+        alert('Virhe tallentaessa ruokaa');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Virhe tallentaessa ruokaa');
+    }
+  };
   return (
     <View style={[styles.container, { backgroundColor: theme.container.backgroundColor }]}>
       {/* Top Tab Bar */}

@@ -49,16 +49,16 @@ app.get('/api/ruokadata', async (req, res) => {
 
 // API-reitti POST-pyynnölle (lisää ruoka)
 app.post('/api/add-food', async (req, res) => {
-  const { knimi, ruokanimi, maarag, kalorit } = req.body;
+  const { ruokanimi, maarag, kalorit } = req.body;
 
-  if (!knimi || !ruokanimi || !maarag) {
+  if (!ruokanimi || !maarag) {
     return res.status(400).json({ error: 'Name, food name, and amount are required' });
   }
 
   try {
     // Lisätään uusi ruoka tietokantaan
-    const query = 'INSERT INTO ruoka(knimi, ruokanimi, maarag, kalorit) VALUES($1, $2, $3, $4)';
-    const values = [knimi, ruokanimi, maarag, kalorit || null]; // Kalorit voivat olla valinnaisia
+    const query = 'INSERT INTO ruoka(ruokanimi, maarag, kalorit) VALUES($1, $2, $3)';
+    const values = [ruokanimi, maarag, kalorit || null]; // Kalorit voivat olla valinnaisia
 
     await pool.query(query, values);
     res.status(201).json({ message: 'Food added successfully' });
